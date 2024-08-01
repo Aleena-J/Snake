@@ -1,8 +1,5 @@
-import snakeGame.Game;
-import snakeGame.WelcomeWindow;
+package snakeGame;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 
 
