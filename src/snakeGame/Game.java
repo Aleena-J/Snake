@@ -14,19 +14,21 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     final private int gameHeight = 700;
     final private int screenHeight = 800; //Add 100 pixels for score count at bottom
     final private int cellSize = 35; //Width/Length of each cell on board(grid)
-    private boolean gameStarted;
+    private boolean gameStarted; //Boolean used to start game, as well as stop methods when game is over
     private int score;
     private Snake snake;
     private Apple apple;
-    private JFrame frame;
+    private JFrame frame; //Frame for the game
     private Timer timer;
-    private boolean directionChanged;
+    //Boolean is necessary to make sure incorrect collisions are not called from excessive inputs
+    private boolean directionChanged; //Flag used to make sure too many directional inputs are not entered
 
     public Game(){
         this.gameStarted = false;
         display();
     }
 
+    //Displays the game
     public void display(){
         frame = new JFrame("Snake Game");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -51,6 +53,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         this.apple = new Apple();
         gameStarted = true;
         apple.generate(gameWidth, gameHeight, cellSize); //Generate apple location
+        //Timer is used to set the speed of the snake and later, to increase the speed
         timer = new Timer(snake.getSpeed(), this);
         timer.start();
         directionChanged = false;
@@ -69,7 +72,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             //Draw snake
             for(int i = 0; i < snake.getNumParts(); i++){
                 if(i == 0){
-                    graphic.setColor(new Color(18, 165, 43));
+                    graphic.setColor(Color.WHITE);
                     graphic.fillRect(snake.getX(i), snake.getY(i), cellSize, cellSize);
                 }else if(i % 2 == 0) {
                     graphic.setColor(Color.GREEN);
@@ -98,11 +101,13 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     }
 
     public int recordScore(){
+        //Read the score file to get the current highest score
         int highestScore = 0;
         boolean writeToFile = false;
         try(BufferedReader reader = new BufferedReader(new FileReader("score.txt"))){
             String stringNum = reader.readLine();
             if(stringNum != null){
+                //If the user's score is lower than the highest, keep number from file
                 if(Integer.parseInt(stringNum) > score){
                     highestScore = Integer.parseInt(stringNum);
                 }else{
@@ -114,6 +119,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         }catch(IOException e){
             e.printStackTrace();
         }
+        //If there is no recorded score, or if the user's score is higher than the highest, record the user's score
         if(writeToFile){
             try(BufferedWriter writer = new BufferedWriter(new FileWriter("score.txt"))){
                 writer.write(String.valueOf(score));
@@ -185,6 +191,8 @@ public class Game extends JPanel implements KeyListener, ActionListener {
     }
 
     public boolean checkAppleCollision(){
+        //Check if the coordinates of the snake's head matches to coordinates of the apple
+        //If it does, an apple has been collected
         if(snake.getX(0) == apple.getAppleXCoord() && snake.getY(0) == apple.getAppleYCoord()){
             return true;
         }else{
@@ -206,6 +214,7 @@ public class Game extends JPanel implements KeyListener, ActionListener {
             if(score % 5 == 0) {
                 snake.adjustSpeed();
             }
+            //Increase the speed of the snake by updating the timer with new speed
             timer.setDelay(snake.getSpeed());
         }
         //Check for collision
@@ -223,6 +232,8 @@ public class Game extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        //Update the direction the snake moves in depending on the key pressed
+        //The snake cannot move back into itself
         if(!directionChanged) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:

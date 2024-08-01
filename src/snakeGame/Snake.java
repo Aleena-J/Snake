@@ -8,7 +8,7 @@ public class Snake {
     private int[] yParts; //Y location of body parts
 
     public Snake(int gameWidth, int gameHeight, int cellSize){
-        this.speed = 125;
+        this.speed = 110;
         this.direction = 'R';
         this.numParts = 3;
         this.xParts = new int[(gameWidth*gameHeight) / (cellSize * cellSize)];

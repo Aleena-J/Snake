@@ -11,6 +11,7 @@ public class Main {
         WelcomeWindow welcomeWindow = new WelcomeWindow();
         welcomeWindow.display();
 
+        //Starts game only if user presses button
         if(welcomeWindow.getChosenOption() == 2){
             Game snakeGame = new Game();
         }
