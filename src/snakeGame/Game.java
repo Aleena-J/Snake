@@ -1,11 +1,12 @@
 package snakeGame;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class Game extends JPanel implements KeyListener, ActionListener {
@@ -91,11 +92,72 @@ public class Game extends JPanel implements KeyListener, ActionListener {
         }else{
             timer.stop();
             frame.dispose();
+            gameOver();
         }
 
     }
 
+    public int recordScore(){
+        int highestScore = 0;
+        boolean writeToFile = false;
+        try(BufferedReader reader = new BufferedReader(new FileReader("score.txt"))){
+            String stringNum = reader.readLine();
+            if(stringNum != null){
+                if(Integer.parseInt(stringNum) > score){
+                    highestScore = Integer.parseInt(stringNum);
+                }else{
+                    writeToFile = true;
+                }
+            }else{
+                writeToFile = true;
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        if(writeToFile){
+            try(BufferedWriter writer = new BufferedWriter(new FileWriter("score.txt"))){
+                writer.write(String.valueOf(score));
+                highestScore = score;
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+        return highestScore;
+    }
 
+    public void gameOver(){
+        JFrame gameOverFrame = new JFrame("Snake Game");
+        gameOverFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        gameOverFrame.getContentPane().setBackground(Color.BLACK);
+        gameOverFrame.setResizable(false);
+        gameOverFrame.setSize(new Dimension(gameWidth, gameHeight));
+        gameOverFrame.setLayout(new GridLayout(3, 1));
+
+        JLabel gameOver = new JLabel("GAME OVER", SwingConstants.CENTER);
+        gameOver.setFont(new Font("Papyrus", Font.BOLD, 72));
+        gameOver.setForeground(Color.GREEN);
+        gameOver.setBackground(Color.BLACK);
+        gameOver.setOpaque(true);
+
+        JLabel currentHigh = new JLabel("Current High Score: " + recordScore(), SwingConstants.CENTER);
+        currentHigh.setFont(new Font("Papyrus", Font.BOLD, 48));
+        currentHigh.setForeground(Color.LIGHT_GRAY);
+        currentHigh.setBackground(Color.BLACK);
+        currentHigh.setOpaque(true);
+
+        JLabel userScore = new JLabel("Your Score: " + score, SwingConstants.CENTER);
+        userScore.setFont(new Font("Papyrus", Font.BOLD, 48));
+        userScore.setForeground(Color.WHITE);
+        userScore.setBackground(Color.BLACK);
+        userScore.setOpaque(true);
+
+        gameOverFrame.add(gameOver);
+        gameOverFrame.add(currentHigh);
+        gameOverFrame.add(userScore);
+        gameOverFrame.setLocationRelativeTo(null);
+        gameOverFrame.setVisible(true);
+
+    }
 
     public void paintComponent(Graphics graphic) {
         super.paintComponent(graphic);

@@ -12,8 +12,6 @@ public class WelcomeWindow implements ActionListener, WindowListener {
     final private int windowHeight;
     final private int windowWidth;
     private volatile int chosenOption;
-    //Add leaderboard functionality and usernames later
-    //String username;
 
     //Add ability to read from a config file later
     public WelcomeWindow(){
